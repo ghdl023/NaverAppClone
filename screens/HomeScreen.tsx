@@ -1,16 +1,24 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {SafeAreaView, StyleSheet, Text} from 'react-native';
 import {WebView} from 'react-native-webview';
 import {RouteNames} from '../routes';
+import {WebViewContext} from '../components/WebViewProvider';
 
 const styles = StyleSheet.create({
   safeArea: {flex: 1},
 });
 
 const HomeScreen = ({navigation}) => {
+  const ctx = useContext(WebViewContext);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <WebView
+        ref={ref => {
+          if (ref !== null) {
+            ctx?.addWebView(ref);
+          }
+        }}
         source={{uri: 'https://m.naver.com'}}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}

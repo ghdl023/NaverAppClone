@@ -6,6 +6,9 @@ import ShoppingScreen from './screens/ShoppingScreen';
 import {RootStackParamList, RouteNames} from './routes';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import BrowserScreen from './screens/BroswerScreen';
+import {WebViewProvider} from './components/WebViewProvider';
+import LoginButton from './components/LoginButton';
+import LoginScreen from './screens/LoginScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -45,22 +48,46 @@ const HomeTab = () => {
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name={RouteNames.HomeTab}
-          component={HomeTab}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name={RouteNames.Broswer}
-          component={BrowserScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <WebViewProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name={RouteNames.HomeTab}
+            component={HomeTab}
+            options={{
+              // headerShown: false
+              headerStyle: {
+                backgroundColor: 'black',
+              },
+              headerRight: LoginButton,
+              title: '',
+            }}
+          />
+          <Stack.Screen
+            name={RouteNames.Broswer}
+            component={BrowserScreen}
+            options={{
+              // headerShown: false,
+              headerStyle: {
+                backgroundColor: 'black',
+              },
+              headerTintColor: 'white',
+            }}
+          />
+          <Stack.Screen
+            name={RouteNames.Login}
+            component={LoginScreen}
+            options={{
+              // headerShown: false,
+              headerStyle: {
+                backgroundColor: 'black',
+              },
+              headerTintColor: 'white',
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </WebViewProvider>
   );
 };
 

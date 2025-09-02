@@ -3,9 +3,11 @@ export const RouteNames = {
   Home: 'home' as const,
   Shopping: 'shopping' as const,
   Broswer: 'browser' as const,
+  Login: 'login' as const,
 };
 
 export type RootStackParamList = {
   [RouteNames.HomeTab]: undefined;
   [RouteNames.Broswer]: undefined;
+  [RouteNames.Login]: undefined;
 };

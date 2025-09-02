@@ -1,4 +1,4 @@
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import React, {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useMemo, useState, useRef} from 'react';
 import {
   SafeAreaView,
@@ -7,9 +7,11 @@ import {
   StyleSheet,
   Animated,
   TouchableOpacity,
+  Share,
 } from 'react-native';
 import {WebView} from 'react-native-webview';
 import {RootStackParamList} from '../routes';
+import {useBackHandler} from '@react-native-community/hooks';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'browser'>;
 
@@ -64,9 +66,9 @@ const NavButton = ({
   disabled,
   onPress,
 }: {
-  iconName: string;
-  disabled?: boolean;
-  onPress?: () => void;
+  iconName: string,
+  disabled?: boolean,
+  onPress?: () => void,
 }) => {
   const color = disabled ? 'gray' : 'white';
   return (
@@ -79,6 +81,16 @@ const NavButton = ({
     </TouchableOpacity>
   );
 };
+
+const DISABLE_PINCH_ZOOM = `(function() {
+  const meta = document.createElement('meta');
+  meta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
+  meta.setAttribute('name', 'viewport');
+  document.getElementsByTagName('head')[0].appendChild(meta);
+
+  document.body.style['user-select'] = 'none';
+  document.body.style['-webkit-user-select'] = 'none';
+})();`;
 
 const BrowserScreen = ({route, navigation}: Props) => {
   const {initialUrl} = route.params;
@@ -95,6 +107,14 @@ const BrowserScreen = ({route, navigation}: Props) => {
 
   const [canGoBack, setCanGoBack] = useState(false);
   const [canGoFoward, setCanGoForward] = useState(false);
+
+  useBackHandler(() => {
+    if (canGoBack) {
+      webViewRef.current?.goBack();
+      return true;
+    }
+    return false;
+  });
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -128,6 +148,8 @@ const BrowserScreen = ({route, navigation}: Props) => {
         onLoadEnd={event => {
           progressAnim.setValue(0);
         }}
+        injectedJavaScript={DISABLE_PINCH_ZOOM}
+        onMessage={() => {}}
       />
       <View style={styles.navigator}>
         <TouchableOpacity
@@ -157,6 +179,12 @@ const BrowserScreen = ({route, navigation}: Props) => {
           iconName="arrow-refresh"
           onPress={() => {
             webViewRef.current?.reload();
+          }}
+        />
+        <NavButton
+          iconName="share"
+          onPress={() => {
+            Share.share({message: url});
           }}
         />
       </View>
